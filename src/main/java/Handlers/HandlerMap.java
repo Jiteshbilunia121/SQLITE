@@ -1,12 +1,20 @@
 package Handlers;
+import Execute.*;
+
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Handler;
 
 public class HandlerMap {
-    private final Map<String, CommandHandler> handlers = new HashMap<>();
+    public final Map<String, CommandHandler> handlers = new HashMap<>();
 
-    public void registerHandler(String command, CommandHandler handler) {
-        handlers.put(command, handler);
+
+    public HandlerMap(){
+        handlers.put("CREATE", new Create());
+        handlers.put("DROP", new Drop());
+        handlers.put("UPDATE", new Update());
+        handlers.put("SELECT", new Select());
+        handlers.put("INSERT", new Insert());
     }
 
     public void executeCommand(String command) {
