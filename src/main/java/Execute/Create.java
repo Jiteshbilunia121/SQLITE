@@ -4,7 +4,8 @@ import Handlers.CommandHandler;
 
 public class Create implements CommandHandler {
     @Override
-    public void handle() {
+    public String handle() {
 
+        return "";
     }
 }

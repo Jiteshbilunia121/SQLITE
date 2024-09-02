@@ -2,9 +2,10 @@ package Execute;
 
 import Handlers.CommandHandler;
 
-public class Update implements CommandHandler {
+public class Insert implements CommandHandler {
+
     @Override
-    public String handle() {
+    public String handle(){
 
         return "";
     }
