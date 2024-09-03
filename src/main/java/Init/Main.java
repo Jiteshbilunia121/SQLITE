@@ -21,6 +21,8 @@ public class Main {
 
             if (Commands.conn.contains(cmd)) {
                 System.out.println("Connected to your DB.......");
+                LoadDB loadDB = new LoadDB();
+//                loadDB.
                 while(running){
                     System.out.println("DB>>");
 
