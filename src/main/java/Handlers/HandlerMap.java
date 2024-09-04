@@ -1,6 +1,7 @@
 package Handlers;
 import Execute.*;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Handler;
@@ -17,12 +18,13 @@ public class HandlerMap {
         handlers.put("INSERT", new Insert());
     }
 
-    public void executeCommand(String command) {
-        CommandHandler handler = handlers.get(command);
+    public String executeCommand(String qry, String command) throws IOException {
+        CommandHandler handler = handlers.get(qry);
         if (handler != null) {
-            handler.handle();
+            return handler.handle(command);
         } else {
             System.out.println("Command not recognized: " + command);
         }
+        return null;
     }
 }

@@ -45,7 +45,7 @@ public class LoadDB {
          //....
         // Load the contents of this txt file byte wise and copy it to tempMap
 
-        // After copying it to tempMap , move the map to the map declared above
+        // After copying it to tempMap , move the map to the outer map declared above
 
 
     }

@@ -1,5 +1,8 @@
 package Handlers;
 
+import java.io.IOException;
+
 public interface CommandHandler {
-    public String handle();
+
+    String handle(String command) throws IOException;
 }
