@@ -7,7 +7,7 @@ import static Init.Commands.query;
 
 public class ProcessCommands {
 
-    HandlerMap handlerMap = new HandlerMap();
+    static HandlerMap handlerMap = new HandlerMap();
 
     public static String processCommand(String command) {
 
@@ -21,30 +21,8 @@ public class ProcessCommands {
         if(qry.isEmpty()){
             return command;
         }
-        String output = "";
-        return switch (qry) {
-            case "CREATE" -> {
-                Create create = new Create();
-                yield create.handle();
-            }
-            case "UPDATE" -> {
-                Update update = new Update();
-                yield update.handle();
-            }
-            case "SELECT" -> {
-                Select select = new Select();
-                yield select.handle();
-            }
-            case "DROP" -> {
-                Drop drop = new Drop();
-                yield drop.handle();
-            }
-            case "INSERT" -> {
-                Insert insert = new Insert();
-                yield insert.handle();
-            }
-            default -> output;
-        };
+//        String output = "";
+        return handlerMap.executeCommand(qry, command);
         // Here you would implement your command handling logic
 
     }
