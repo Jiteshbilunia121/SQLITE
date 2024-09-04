@@ -4,7 +4,7 @@ import Handlers.CommandHandler;
 
 public class Drop implements CommandHandler {
     @Override
-    public String handle() {
+    public String handle(String command) {
 
         return "";
     }
