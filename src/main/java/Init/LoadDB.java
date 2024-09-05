@@ -11,7 +11,7 @@ import java.util.HashMap;
 
 public class LoadDB {
 
-    public HashMap<String, HashMap<String, String> > map = new HashMap<>();
+    public static HashMap<String, HashMap<String, String> > map = new HashMap<>();
     // Key of (outer)hashmap -- table name ..... this table name = file name
     // value of (outer)hashmap -- contents of the table
 
@@ -50,6 +50,7 @@ public class LoadDB {
         // After copying it to tempMap , move the map to the outer map declared above
         String filePath = "C:\\Users\\Jitesh\\IdeaProjects\\SQLITE\\src\\main\\java\\DB" + tableName;
         try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
+            reader.readLine();
             String line;
             while ((line = reader.readLine()) != null) {
                 String[] vals = line.split(" ");
