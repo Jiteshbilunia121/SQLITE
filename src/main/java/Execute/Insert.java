@@ -6,6 +6,7 @@ import Handlers.CommandHandler;
 
 import java.io.*;
 import java.util.HashMap;
+import java.util.UUID;
 
 
 public class Insert implements CommandHandler {
@@ -19,10 +20,15 @@ public class Insert implements CommandHandler {
         insertTable(args, myPath, table_name);
         return "Insert Success";
     }
+    public String generatePrimaryKey() {
+        return UUID.randomUUID().toString();
+    }
     private void insertTable(String[] rowData, String filePath, String tableName){
 
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath, true))) { // true for appending data
             StringBuilder row = new StringBuilder();
+            String primaryKey = generatePrimaryKey();
+            row.append(primaryKey);
             for (int i = 3; i < rowData.length; i++) {
                 row.append(rowData[i]);
                 if (i < rowData.length - 1) {
