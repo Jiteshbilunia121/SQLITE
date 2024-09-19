@@ -70,17 +70,29 @@ public class LoadDB {
                 String[] vals = line.split(" ");
                 String primaryKey = vals[0];
                 mainTable.put(primaryKey, line);
-
-                String col1Value = vals[1];
-                col1Table.computeIfAbsent(col1Value, k -> new ArrayList<>()).add(primaryKey);
-
-                // Update column 2 index (for queries on col2)
-                String col2Value = vals[2];
-                col2Table.computeIfAbsent(col2Value, k -> new ArrayList<>()).add(primaryKey);
-
-                // Update column 3 index (for queries on col3)
-                String col3Value = vals[3];
-                col3Table.computeIfAbsent(col3Value, k -> new ArrayList<>()).add(primaryKey);
+                int i = 0;
+                for(String colValues : vals){
+                    if(i == 0){
+                        col1Table.computeIfAbsent(colValues, k -> new ArrayList<>()).add(primaryKey);
+                    }
+                    else if(i == 1){
+                        col2Table.computeIfAbsent(colValues, k -> new ArrayList<>()).add(primaryKey);
+                    }
+                    else if(i == 2){
+                        col3Table.computeIfAbsent(colValues, k -> new ArrayList<>()).add(primaryKey);
+                    }
+                    i++;
+                }
+//                String col1Value = vals[1];
+//                col1Table.computeIfAbsent(col1Value, k -> new ArrayList<>()).add(primaryKey);
+//
+//                // Update column 2 index (for queries on col2)
+//                String col2Value = vals[2];
+//                col2Table.computeIfAbsent(col2Value, k -> new ArrayList<>()).add(primaryKey);
+//
+//                // Update column 3 index (for queries on col3)
+//                String col3Value = vals[3];
+//                col3Table.computeIfAbsent(col3Value, k -> new ArrayList<>()).add(primaryKey);
                 // Check if the row contains the search value
             }
 

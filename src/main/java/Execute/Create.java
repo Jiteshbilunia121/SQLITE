@@ -24,12 +24,13 @@ public class Create implements CommandHandler {
 
 
     public void createTable(String[] rowData, String filePath) {
+
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath, true))) { // true for appending data
             StringBuilder row = new StringBuilder();
             for (int i = 3; i < rowData.length; i++) {
                 row.append(rowData[i]);
                 if (i < rowData.length - 1) {
-                    row.append(", ");  // Separating values by commas
+                    row.append(" ");  // Separating values by spaces
                 }
             }
             writer.write(row.toString());

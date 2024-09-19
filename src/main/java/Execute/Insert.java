@@ -1,12 +1,15 @@
 package Execute;
 
 
-import static Init.LoadDB.map;
 import Handlers.CommandHandler;
 
 import java.io.*;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.UUID;
+
+import static Init.LoadDB.*;
 
 
 public class Insert implements CommandHandler {
@@ -23,6 +26,7 @@ public class Insert implements CommandHandler {
     public String generatePrimaryKey() {
         return UUID.randomUUID().toString();
     }
+
     private void insertTable(String[] rowData, String filePath, String tableName){
 
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath, true))) { // true for appending data
@@ -45,19 +49,43 @@ public class Insert implements CommandHandler {
 
     private void updateMap(String filePath, String tableName) {
 
-        HashMap<String, String> tempMap = new HashMap<>();
+        // For updating fetch the map and from the loadDB class
+        // Delete the old map
+        // insert the new map in place of the old map in mainMap, col1index, col2index, col3index
 
+        HashMap<String, String> mainTable = mainMap.get(tableName);
+        HashMap<String, List<String>> col1Table = col1Index.get(tableName);
+        HashMap<String, List<String>> col2Table = col2Index.get(tableName);
+        HashMap<String, List<String>> col3Table = col3Index.get(tableName);
+        mainMap.remove(tableName);
+        col1Index.remove(tableName);
+        col2Index.remove(tableName);
+        col2Index.remove(tableName);
         try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
             reader.readLine();
             String line;
             while ((line = reader.readLine()) != null) {
                 String[] vals = line.split(" ");
-                for (String values : vals) {
-                    tempMap.put(values, line);
+                String primaryKey = vals[0];
+                mainTable.put(primaryKey, line);
+                int i = 0;
+                for(String colValues : vals){
+                    if(i == 0){
+                        col1Table.computeIfAbsent(colValues, k -> new ArrayList<>()).add(primaryKey);
+                    }
+                    else if(i == 1){
+                        col2Table.computeIfAbsent(colValues, k -> new ArrayList<>()).add(primaryKey);
+                    }
+                    else if(i == 2){
+                        col3Table.computeIfAbsent(colValues, k -> new ArrayList<>()).add(primaryKey);
+                    }
+                    i++;
                 }
-                // Check if the row contains the search value
             }
-            map.put(tableName, tempMap);
+            mainMap.put(tableName, mainTable);
+            col1Index.put(tableName, col1Table);
+            col2Index.put(tableName, col2Table);
+            col3Index.put(tableName, col3Table);
             // The contenets have been copied to the map
         } catch (IOException e) {
             System.out.println("Exception thrown" + e.getMessage());
