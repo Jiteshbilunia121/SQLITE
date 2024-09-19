@@ -7,11 +7,22 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class LoadDB {
 
-    public static HashMap<String, HashMap<String, String> > map = new HashMap<>();
+    public static HashMap<String, HashMap<String, String> > mainMap = new HashMap<>();
+    // Column 1 index (column1 value -> list of primary keys)
+    public static HashMap<String, HashMap<String, List<String>>> col1Index = new HashMap<>();
+
+    // Column 2 index (column2 value -> list of primary keys)
+    public static HashMap<String, HashMap<String, List<String>>> col2Index = new HashMap<>();
+
+    // Column 3 index (column3 value -> list of primary keys)
+    public static HashMap<String, HashMap<String, List<String>>> col3Index = new HashMap<>();
+
     // Key of (outer)hashmap -- table name ..... this table name = file name
     // value of (outer)hashmap -- contents of the table
 
@@ -42,7 +53,10 @@ public class LoadDB {
         }
     }
     public void CopyMap(String tableName){
-         HashMap<String, String> tempMap = new HashMap<>();
+         HashMap<String, String> mainTable = new HashMap<>();
+         HashMap<String, List<String>> col1Table = new HashMap<>();
+         HashMap<String, List<String>> col2Table = new HashMap<>();
+         HashMap<String, List<String>> col3Table = new HashMap<>();
          // Key of tempMap = primary key for the table, int value incremented by one for each row in table
         //....
         // Load the contents of this txt file byte wise and copy it to tempMap
@@ -54,14 +68,27 @@ public class LoadDB {
             String line;
             while ((line = reader.readLine()) != null) {
                 String[] vals = line.split(" ");
-                for (String values : vals) {
-                    tempMap.put(values, line);
-                }
+                String primaryKey = vals[0];
+                mainTable.put(primaryKey, line);
+
+                String col1Value = vals[1];
+                col1Table.computeIfAbsent(col1Value, k -> new ArrayList<>()).add(primaryKey);
+
+                // Update column 2 index (for queries on col2)
+                String col2Value = vals[2];
+                col2Table.computeIfAbsent(col2Value, k -> new ArrayList<>()).add(primaryKey);
+
+                // Update column 3 index (for queries on col3)
+                String col3Value = vals[3];
+                col3Table.computeIfAbsent(col3Value, k -> new ArrayList<>()).add(primaryKey);
                 // Check if the row contains the search value
             }
 
             // The contenets have been copied to the map
-            map.put(tableName, tempMap);
+            mainMap.put(tableName, mainTable);
+            col1Index.put(tableName, col1Table);
+            col2Index.put(tableName, col2Table);
+            col3Index.put(tableName, col3Table);
         } catch (IOException e) {
             e.printStackTrace();
         }
