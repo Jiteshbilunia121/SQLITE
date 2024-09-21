@@ -3,33 +3,35 @@ package Execute;
 import Handlers.CommandHandler;
 import static Init.LoadDB.*;
 
-import java.lang.reflect.Array;
 import java.util.*;
 
 public class Select implements CommandHandler {
 
-
     public List<String> queryMultipleColumns(ArrayList<HashMap<String, List<String>>> colTable, HashMap<String, String> mainTable, String[] args) {
-        // Get primary keys for col1 and col2 ...col3values
-        // Put the liSt in a set
-        // Find intersection of all the sets(using retailALl)
-        // Query over final set and add fetch the values from the mainTable
-        //   col1KeySet.retainAll(col2KeySet);
-
-        ArrayList<List<String>> keys = new ArrayList<>();
         ArrayList<Set<String>> colKeySet = new ArrayList<>();
-        int idx = 3;
-        for(HashMap<String, List<String>> map : colTable) {
-                keys.add(map.getOrDefault(args[idx], new ArrayList<>()));
-                idx++;
+        int idx = 3; // Start from the 4th argument (after "SELECT from TABLE_NAME")
+
+        // Loop through column tables and corresponding query values
+        for (HashMap<String, List<String>> map : colTable) {
+            String queryValue = args[idx];
+
+            // Only consider columns where a value is provided
+            if (!queryValue.equals("null")) {  // Assuming "null" represents no query value
+                List<String> keys = map.getOrDefault(queryValue, new ArrayList<>());
+                colKeySet.add(new HashSet<>(keys)); // Add keys to column key set
+            }
+            idx++;
         }
-        for(List<String> key : keys) {
-            colKeySet.add(new HashSet<>(key));
+
+        // Initialize the intersection set (with a non-empty set, if possible)
+        Set<String> intersection = new HashSet<>();
+        if (!colKeySet.isEmpty()) {
+            intersection = colKeySet.get(0);
+            for (int i = 1; i < colKeySet.size(); i++) {
+                intersection.retainAll(colKeySet.get(i)); // Retain only common keys
+            }
         }
-        Set<String> intersection = colKeySet.get(0);
-        for(int i = 1; i < colKeySet.size(); i++) {
-            intersection.retainAll(colKeySet.get(i));
-        }
+
         // Retrieve rows from mainTable for matching primary keys
         List<String> results = new ArrayList<>();
         for (String key : intersection) {
@@ -41,29 +43,36 @@ public class Select implements CommandHandler {
 
     @Override
     public String handle(String command) {
-
         String[] args = command.split(" ");
-        String table_name = args[2];
+        String table_name = args[2];  // Table name is the third argument
+
+        // Get the mainTable and column indexes
         HashMap<String, String> mainTable = mainMap.get(table_name);
         ArrayList<HashMap<String, List<String>>> colTable = new ArrayList<>();
-        for(int cols = 3, i = 0; cols < args.length && i < 3; cols++, i++) {
-            HashMap<String, List<String>> mp = new HashMap<>();
+
+        // Add column indexes based on the command input (up to 3 column values)
+        for (int cols = 3, i = 0; cols < args.length && i < 3; cols++, i++) {
+            HashMap<String, List<String>> mp = null;
+
             if (i == 0) {
-                    mp = col1Index.get(table_name);
+                mp = col1Index.get(table_name);  // Index for col1
             } else if (i == 1) {
-                mp = col2Index.get(table_name);
-
+                mp = col2Index.get(table_name);  // Index for col2
             } else if (i == 2) {
-                mp = col3Index.get(table_name);
+                mp = col3Index.get(table_name);  // Index for col3
             }
-            colTable.add(mp);
-        }
-        List<String> results;
-        results = queryMultipleColumns(colTable, mainTable, args);
-        for(String result : results) {
-            System.out.println(result);
+
+            if (mp != null) {
+                colTable.add(mp);
+            }
         }
 
-        return "Query Handled successfully";
+        // Query for the results based on the column values provided
+        List<String> results = queryMultipleColumns(colTable, mainTable, args);
+        for (String result : results) {
+            System.out.println(result);  // Output each result
+        }
+
+        return "Query handled successfully";
     }
 }
